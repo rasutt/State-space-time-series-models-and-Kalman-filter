@@ -22,7 +22,9 @@ A state-space model can be made up of:
 - An observation equation $P(y_t | x_t)$
 - A state transition equation $P(x_{t + 1} | x_t)$
 - Where $x_t$ and $y_t$ satisfy the Markov equations: 
+
 $$P(y_{t + 1}, x_{t + 1} | y_t, x_t, ..., y_1, x_1) = P(y_{t + 1}, x_{t + 1} | y_t, x_t)$$
+
 $$P(y_{t + 1} | x_{t + 1}, y_t, x_t) = P(y_{t + 1} | x_{t + 1})$$
 - Which implies that $P(y_{t + 1}, x_{t + 1} | y_t, x_t) = P(y_{t + 1} | x_{t + 1}) P(x_{t + 1} | x_t)$
 
@@ -36,6 +38,7 @@ $$e_t \sim N(0, \sigma^2)$$
 
 ```{r}
 # Set simulation parameters
+set.seed(1)
 n_t <- 20
 t <- 1:n_t
 n_reals <- 5
@@ -56,8 +59,11 @@ matlines(t, quants, col = 'red', lty = q_lty)
 The steps in a random walk are white noise.
 
 $$a_t \sim N(0, \tau^2)$$
+
 $$\mu_{t + 1} = \mu_t + a_t$$
+
 $$\mu_{t + 1} | \mu_t \sim N(\mu_t, \tau^2)$$
+
 $$u_0 = 0 \implies \mu_t \sim N(0, t \tau^2)$$
 
 ```{r}
@@ -73,7 +79,9 @@ matlines(t, quants * sqrt(t), col = 'red', lty = q_lty)
 ### Quarterly random walk
 
 $$\mu_{t + 1} = \mu_{t - 3} + a_t$$
+
 $$\mu_{t + 1} | \mu_{t - 3} \sim N \left( \mu_{t - 3}, \tau^2 \right)$$
+
 $$u_0 = 0 \implies \mu_t \sim N \left( 0, ceiling \left( \frac{t}{4} \right) \tau^2 \right)$$
 
 ```{r}
@@ -91,9 +99,13 @@ matlines(t, quants * sqrt(ceiling(t / 4)), col = 'red', lty = q_lty)
 ### Evolving variance
 
 $$h_{t + 1} = h_t + a_t$$
+
 $$y_t = \exp \left( \frac{h_t}{2} \right) e_t$$
+
 $$y_t \not\sim N$$
+
 $$y_t | h_t \sim N(0, \exp(h_t))$$
+
 $$h_0 = 0 \implies \log\{var(y_t)\} \sim N(0, t \tau^2)$$
 
 ```{r}
@@ -110,7 +122,9 @@ lines(rep(0, n_t), col = 'red')
 ### Filtering for a random walk plus white noise model
 
 $$y_t = \mu_t + e_t$$
+
 $$y_t | \mu_t \sim N(\mu_t, \sigma^2)$$
+
 $$y_t \sim N(0, t \tau^2 + \sigma^2)$$
 
 ```{r}
@@ -121,14 +135,23 @@ matplot(t, y, type = 'l', main = "Random walk plus white noise", col = 1,
 matlines(t, quants * sqrt(t + 1), col = 'red', lty = q_lty)
 ```
 $$x_t := \mu_t$$
+
 $$\tilde{y}_t \sim N(\tilde{x}_t, \sigma^2 I_t)$$
+
 $$\tilde{x}_t \sim N(\tilde{x}_{t - 1}, \tau^2 I_t)$$
+
 $$\implies (\tilde{x}_t, \tilde{y}_t) \sim N$$
+
 $$E(\tilde{x}_t | \tilde{y}_t) = E(\tilde{x}_t) + Cov(\tilde{x}_t, \tilde{y}_t) Var(\tilde{y}_t)^{-1} \{ \tilde{y}_t - E(\tilde{y}_t) \}$$
+
 $$Var(\tilde{x}_t | \tilde{y}_t) = Var(\tilde{x}_t) - Cov(\tilde{x}_t, \tilde{y}_t) Var(\tilde{y}_t)^{-1} Cov(\tilde{y}_t, \tilde{x}_t)$$
+
 $$E(\tilde{x}_t) = E(\tilde{y}_t) = 0$$
+
 $$Cov(\tilde{x}_t, \tilde{y}_t) = Cov(\tilde{y}_t, \tilde{x}_t)' = (Cov(\tilde{x}_t, \tilde{x}_t) + Cov(\tilde{e}_t, \tilde{x}_t))' = Var(\tilde{x}_t)$$
+
 $$Var(\tilde{y}_t) = Var(\tilde{x}_t) + \sigma^2 I_t$$
+
 $$
 \begin{bmatrix} 
 1  & &  &\\ 
@@ -152,14 +175,23 @@ a_1 \\
 a_t \\ 
 \end{bmatrix}
 $$
+
 $$D_t \tilde{x}_t = \tilde{g}_t x_1 + \tilde{a}_t$$
+
 $$D_t Var(\tilde{x}_t) D_t' = K^2 \tilde{g}_t \tilde{g}_t' + \tau^2 I_t$$
+
 $$x_1 \sim N(0, K^2)$$
+
 $$Var(\tilde{x}_t) = K^2 D_t^{-1} \tilde{g}_t \tilde{g}_t' D_t'^{-1} + \tau^2 D_t^{-1} D_t'^{-1} $$
+
 $$E(\tilde{x}_t | \tilde{y}_t) = Var(\tilde{x}_t) \{ Var(\tilde{x}_t) + \sigma^2 I_t \}^{-1} \tilde{y}_t$$
+
 $$Var(\tilde{x}_t | \tilde{y}_t) = Var(\tilde{x}_t) - Var(\tilde{x}_t) \{ Var(\tilde{x}_t) + \sigma^2 I_t \}^{-1} Var(\tilde{x}_t)$$
+
 $$\implies \tilde{x}_t | \tilde{y}_t$$
+
 $$\implies \tilde{y}_{t + k} | \tilde{y}_t$$
+
 $$K = 0, \tau = 1, \sigma = 1 \implies Var(\tilde{x}_t) = D_t^{-1} D_t'^{-1} $$
 
 ```{r}

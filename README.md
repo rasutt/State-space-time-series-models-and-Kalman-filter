@@ -23,10 +23,12 @@ A state-space model can be made up of:
     *P*(*x*<sub>*t* + 1</sub>\|*x*<sub>*t*</sub>)
 -   Where *x*<sub>*t*</sub> and *y*<sub>*t*</sub> satisfy the Markov
     equations:
-    *P*(*y*<sub>*t* + 1</sub>, *x*<sub>*t* + 1</sub>\|*y*<sub>*t*</sub>, *x*<sub>*t*</sub>, ..., *y*<sub>1</sub>, *x*<sub>1</sub>) = *P*(*y*<sub>*t* + 1</sub>, *x*<sub>*t* + 1</sub>\|*y*<sub>*t*</sub>, *x*<sub>*t*</sub>)
-    *P*(*y*<sub>*t* + 1</sub>\|*x*<sub>*t* + 1</sub>, *y*<sub>*t*</sub>, *x*<sub>*t*</sub>) = *P*(*y*<sub>*t* + 1</sub>\|*x*<sub>*t* + 1</sub>)
--   Which implies that
-    *P*(*y*<sub>*t* + 1</sub>, *x*<sub>*t* + 1</sub>\|*y*<sub>*t*</sub>, *x*<sub>*t*</sub>) = *P*(*y*<sub>*t* + 1</sub>\|*x*<sub>*t* + 1</sub>)*P*(*x*<sub>*t* + 1</sub>\|*x*<sub>*t*</sub>)
+
+*P*(*y*<sub>*t* + 1</sub>, *x*<sub>*t* + 1</sub>\|*y*<sub>*t*</sub>, *x*<sub>*t*</sub>, ..., *y*<sub>1</sub>, *x*<sub>1</sub>) = *P*(*y*<sub>*t* + 1</sub>, *x*<sub>*t* + 1</sub>\|*y*<sub>*t*</sub>, *x*<sub>*t*</sub>)
+
+*P*(*y*<sub>*t* + 1</sub>\|*x*<sub>*t* + 1</sub>, *y*<sub>*t*</sub>, *x*<sub>*t*</sub>) = *P*(*y*<sub>*t* + 1</sub>\|*x*<sub>*t* + 1</sub>)
+- Which implies that
+*P*(*y*<sub>*t* + 1</sub>, *x*<sub>*t* + 1</sub>\|*y*<sub>*t*</sub>, *x*<sub>*t*</sub>) = *P*(*y*<sub>*t* + 1</sub>\|*x*<sub>*t* + 1</sub>)*P*(*x*<sub>*t* + 1</sub>\|*x*<sub>*t*</sub>)
 
 Obtaining the conditional distribution
 *P*(*x*<sub>*t*</sub>\|*y*<sub>*t*</sub>, ..., *y*<sub>1</sub>), from
@@ -41,6 +43,7 @@ White noise is the core of a stochastic time series model.
 
 ``` r
 # Set simulation parameters
+set.seed(1)
 n_t <- 20
 t <- 1:n_t
 n_reals <- 5
@@ -63,8 +66,11 @@ matlines(t, quants, col = 'red', lty = q_lty)
 The steps in a random walk are white noise.
 
 *a*<sub>*t*</sub> ∼ *N*(0, *τ*<sup>2</sup>)
+
 *μ*<sub>*t* + 1</sub> = *μ*<sub>*t*</sub> + *a*<sub>*t*</sub>
+
 *μ*<sub>*t* + 1</sub>\|*μ*<sub>*t*</sub> ∼ *N*(*μ*<sub>*t*</sub>, *τ*<sup>2</sup>)
+
 *u*<sub>0</sub> = 0 ⟹ *μ*<sub>*t*</sub> ∼ *N*(0, *t**τ*<sup>2</sup>)
 
 ``` r
@@ -82,7 +88,9 @@ matlines(t, quants * sqrt(t), col = 'red', lty = q_lty)
 ### Quarterly random walk
 
 *μ*<sub>*t* + 1</sub> = *μ*<sub>*t* − 3</sub> + *a*<sub>*t*</sub>
+
 *μ*<sub>*t* + 1</sub>\|*μ*<sub>*t* − 3</sub> ∼ *N*(*μ*<sub>*t* − 3</sub>,*τ*<sup>2</sup>)
+
 $$u\_0 = 0 \\implies \\mu\_t \\sim N \\left( 0, ceiling \\left( \\frac{t}{4} \\right) \\tau^2 \\right)$$
 
 ``` r
@@ -102,9 +110,13 @@ matlines(t, quants * sqrt(ceiling(t / 4)), col = 'red', lty = q_lty)
 ### Evolving variance
 
 *h*<sub>*t* + 1</sub> = *h*<sub>*t*</sub> + *a*<sub>*t*</sub>
+
 $$y\_t = \\exp \\left( \\frac{h\_t}{2} \\right) e\_t$$
+
 *y*<sub>*t*</sub> ≁ *N*
+
 *y*<sub>*t*</sub>\|*h*<sub>*t*</sub> ∼ *N*(0, exp (*h*<sub>*t*</sub>))
+
 *h*<sub>0</sub> = 0 ⟹ log {*v**a**r*(*y*<sub>*t*</sub>)} ∼ *N*(0, *t**τ*<sup>2</sup>)
 
 ``` r
@@ -123,7 +135,9 @@ lines(rep(0, n_t), col = 'red')
 ### Filtering for a random walk plus white noise model
 
 *y*<sub>*t*</sub> = *μ*<sub>*t*</sub> + *e*<sub>*t*</sub>
+
 *y*<sub>*t*</sub>\|*μ*<sub>*t*</sub> ∼ *N*(*μ*<sub>*t*</sub>, *σ*<sup>2</sup>)
+
 *y*<sub>*t*</sub> ∼ *N*(0, *t**τ*<sup>2</sup> + *σ*<sup>2</sup>)
 
 ``` r
@@ -136,14 +150,23 @@ matlines(t, quants * sqrt(t + 1), col = 'red', lty = q_lty)
 
 ![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 *x*<sub>*t*</sub> := *μ*<sub>*t*</sub>
+
 *ỹ*<sub>*t*</sub> ∼ *N*(*x̃*<sub>*t*</sub>, *σ*<sup>2</sup>*I*<sub>*t*</sub>)
+
 *x̃*<sub>*t*</sub> ∼ *N*(*x̃*<sub>*t* − 1</sub>, *τ*<sup>2</sup>*I*<sub>*t*</sub>)
+
  ⟹ (*x̃*<sub>*t*</sub>, *ỹ*<sub>*t*</sub>) ∼ *N*
+
 *E*(*x̃*<sub>*t*</sub>\|*ỹ*<sub>*t*</sub>) = *E*(*x̃*<sub>*t*</sub>) + *C**o**v*(*x̃*<sub>*t*</sub>, *ỹ*<sub>*t*</sub>)*V**a**r*(*ỹ*<sub>*t*</sub>)<sup> − 1</sup>{*ỹ*<sub>*t*</sub> − *E*(*ỹ*<sub>*t*</sub>)}
+
 *V**a**r*(*x̃*<sub>*t*</sub>\|*ỹ*<sub>*t*</sub>) = *V**a**r*(*x̃*<sub>*t*</sub>) − *C**o**v*(*x̃*<sub>*t*</sub>, *ỹ*<sub>*t*</sub>)*V**a**r*(*ỹ*<sub>*t*</sub>)<sup> − 1</sup>*C**o**v*(*ỹ*<sub>*t*</sub>, *x̃*<sub>*t*</sub>)
+
 *E*(*x̃*<sub>*t*</sub>) = *E*(*ỹ*<sub>*t*</sub>) = 0
+
 *C**o**v*(*x̃*<sub>*t*</sub>, *ỹ*<sub>*t*</sub>) = *C**o**v*(*ỹ*<sub>*t*</sub>, *x̃*<sub>*t*</sub>)′ = (*C**o**v*(*x̃*<sub>*t*</sub>, *x̃*<sub>*t*</sub>) + *C**o**v*(*ẽ*<sub>*t*</sub>, *x̃*<sub>*t*</sub>))′ = *V**a**r*(*x̃*<sub>*t*</sub>)
+
 *V**a**r*(*ỹ*<sub>*t*</sub>) = *V**a**r*(*x̃*<sub>*t*</sub>) + *σ*<sup>2</sup>*I*<sub>*t*</sub>
+
 $$
 \\begin{bmatrix} 
 1  & &  &\\\\ 
@@ -167,14 +190,23 @@ a\_1 \\\\
 a\_t \\\\ 
 \\end{bmatrix}
 $$
+
 *D*<sub>*t*</sub>*x̃*<sub>*t*</sub> = *g̃*<sub>*t*</sub>*x*<sub>1</sub> + *ã*<sub>*t*</sub>
+
 *D*<sub>*t*</sub>*V**a**r*(*x̃*<sub>*t*</sub>)*D*<sub>*t*</sub>′ = *K*<sup>2</sup>*g̃*<sub>*t*</sub>*g̃*<sub>*t*</sub>′ + *τ*<sup>2</sup>*I*<sub>*t*</sub>
+
 *x*<sub>1</sub> ∼ *N*(0, *K*<sup>2</sup>)
+
 *V**a**r*(*x̃*<sub>*t*</sub>) = *K*<sup>2</sup>*D*<sub>*t*</sub><sup> − 1</sup>*g̃*<sub>*t*</sub>*g̃*<sub>*t*</sub>′*D*<sub>*t*</sub>′<sup> − 1</sup> + *τ*<sup>2</sup>*D*<sub>*t*</sub><sup> − 1</sup>*D*<sub>*t*</sub>′<sup> − 1</sup>
+
 *E*(*x̃*<sub>*t*</sub>\|*ỹ*<sub>*t*</sub>) = *V**a**r*(*x̃*<sub>*t*</sub>){*V**a**r*(*x̃*<sub>*t*</sub>) + *σ*<sup>2</sup>*I*<sub>*t*</sub>}<sup> − 1</sup>*ỹ*<sub>*t*</sub>
+
 *V**a**r*(*x̃*<sub>*t*</sub>\|*ỹ*<sub>*t*</sub>) = *V**a**r*(*x̃*<sub>*t*</sub>) − *V**a**r*(*x̃*<sub>*t*</sub>){*V**a**r*(*x̃*<sub>*t*</sub>) + *σ*<sup>2</sup>*I*<sub>*t*</sub>}<sup> − 1</sup>*V**a**r*(*x̃*<sub>*t*</sub>)
+
  ⟹ *x̃*<sub>*t*</sub>\|*ỹ*<sub>*t*</sub>
+
  ⟹ *ỹ*<sub>*t* + *k*</sub>\|*ỹ*<sub>*t*</sub>
+
 *K* = 0, *τ* = 1, *σ* = 1 ⟹ *V**a**r*(*x̃*<sub>*t*</sub>) = *D*<sub>*t*</sub><sup> − 1</sup>*D*<sub>*t*</sub>′<sup> − 1</sup>
 
 ``` r
