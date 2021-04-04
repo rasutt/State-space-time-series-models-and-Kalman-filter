@@ -80,9 +80,9 @@ matlines(t, quants * sqrt(t), col = 'red', lty = q_lty)
 
 $$\mu_{t + 1} = \mu_{t - 3} + a_t$$
 
-$$\mu_{t + 1} | \mu_{t - 3} \sim N \left( \mu_{t - 3}, \tau^2 \right)$$
+$$\mu_{t + 1} | \mu_{t - 3} \sim N \bigg( \mu_{t - 3}, \tau^2 \bigg)$$
 
-$$u_0 = 0 \implies \mu_t \sim N \left( 0, ceiling \left( \frac{t}{4} \right) \tau^2 \right)$$
+$$u_0 = 0 \implies \mu_t \sim N \bigg( 0, ceiling \bigg( \frac{t}{4} \bigg) \tau^2 \bigg)$$
 
 ```{r}
 # Simulate quarterly random walk 
@@ -100,13 +100,13 @@ matlines(t, quants * sqrt(ceiling(t / 4)), col = 'red', lty = q_lty)
 
 $$h_{t + 1} = h_t + a_t$$
 
-$$y_t = \exp \left( \frac{h_t}{2} \right) e_t$$
+$$y_t = \exp \bigg( \frac{h_t}{2} \bigg) e_t$$
 
 $$y_t \not\sim N$$
 
 $$y_t | h_t \sim N(0, \exp(h_t))$$
 
-$$h_0 = 0 \implies \log\{var(y_t)\} \sim N(0, t \tau^2)$$
+$$h_0 = 0 \implies \log\{var(y_t)\} \sim N(0, t\tau^2)$$
 
 ```{r}
 # Simulate evolvng variance
@@ -152,8 +152,7 @@ $$Cov(\tilde{x}_t, \tilde{y}_t) = Cov(\tilde{y}_t, \tilde{x}_t)' = (Cov(\tilde{x
 
 $$Var(\tilde{y}_t) = Var(\tilde{x}_t) + \sigma^2 I_t$$
 
-$$
-\begin{bmatrix} 
+$$\begin{bmatrix} 
 1  & &  &\\ 
 -1 & 1 & & \\ 
 & ... & \\ 
@@ -173,8 +172,7 @@ x_t \\
 a_1 \\ 
 ... \\ 
 a_t \\ 
-\end{bmatrix}
-$$
+\end{bmatrix}$$
 
 $$D_t \tilde{x}_t = \tilde{g}_t x_1 + \tilde{a}_t$$
 

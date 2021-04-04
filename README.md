@@ -89,9 +89,9 @@ matlines(t, quants * sqrt(t), col = 'red', lty = q_lty)
 
 *μ*<sub>*t* + 1</sub> = *μ*<sub>*t* − 3</sub> + *a*<sub>*t*</sub>
 
-*μ*<sub>*t* + 1</sub>\|*μ*<sub>*t* − 3</sub> ∼ *N*(*μ*<sub>*t* − 3</sub>,*τ*<sup>2</sup>)
+*μ*<sub>*t* + 1</sub>\|*μ*<sub>*t* − 3</sub> ∼ *N*(*μ*<sub>*t* − 3</sub>, *τ*<sup>2</sup>)
 
-$$u\_0 = 0 \\implies \\mu\_t \\sim N \\left( 0, ceiling \\left( \\frac{t}{4} \\right) \\tau^2 \\right)$$
+$$u\_0 = 0 \\implies \\mu\_t \\sim N \\bigg( 0, ceiling \\bigg( \\frac{t}{4} \\bigg) \\tau^2 \\bigg)$$
 
 ``` r
 # Simulate quarterly random walk 
@@ -111,7 +111,7 @@ matlines(t, quants * sqrt(ceiling(t / 4)), col = 'red', lty = q_lty)
 
 *h*<sub>*t* + 1</sub> = *h*<sub>*t*</sub> + *a*<sub>*t*</sub>
 
-$$y\_t = \\exp \\left( \\frac{h\_t}{2} \\right) e\_t$$
+$$y\_t = \\exp \\bigg( \\frac{h\_t}{2} \\bigg) e\_t$$
 
 *y*<sub>*t*</sub> ≁ *N*
 
@@ -167,8 +167,7 @@ matlines(t, quants * sqrt(t + 1), col = 'red', lty = q_lty)
 
 *V**a**r*(*ỹ*<sub>*t*</sub>) = *V**a**r*(*x̃*<sub>*t*</sub>) + *σ*<sup>2</sup>*I*<sub>*t*</sub>
 
-$$
-\\begin{bmatrix} 
+$$\\begin{bmatrix} 
 1  & &  &\\\\ 
 -1 & 1 & & \\\\ 
 & ... & \\\\ 
@@ -188,8 +187,7 @@ x\_t \\\\
 a\_1 \\\\ 
 ... \\\\ 
 a\_t \\\\ 
-\\end{bmatrix}
-$$
+\\end{bmatrix}$$
 
 *D*<sub>*t*</sub>*x̃*<sub>*t*</sub> = *g̃*<sub>*t*</sub>*x*<sub>1</sub> + *ã*<sub>*t*</sub>
 
