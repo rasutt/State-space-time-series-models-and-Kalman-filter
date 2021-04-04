@@ -1,11 +1,7 @@
 ---
 title: "State-space models"
 author: "Robin Aldridge-Sutton"
-date: "04/04/2021"
 output:
-  github_document:
-    toc: True
-  html_document: default
   pdf_document: default
 ---
 
@@ -41,7 +37,7 @@ $$e_t \sim N(0, \sigma^2)$$
 set.seed(1)
 n_t <- 20
 t <- 1:n_t
-n_reals <- 5
+n_reals <- 3
 n_samps <- n_t * n_reals
 quants <- t(matrix(c(0, 1.96, -1.96), nrow = 3, ncol = n_t))
 q_lty <- c(1, 2, 2)
@@ -51,7 +47,7 @@ e <- matrix(rnorm(n_samps), nrow = n_t)
 
 # Plot it
 matplot(t, e, type = 'l', main = "White noise", col = 1, lty = 1)
-matlines(t, quants, col = 'red', lty = q_lty)
+matlines(t, quants, col = 'blue', lty = q_lty)
 ```
 
 ### Random walk
@@ -73,16 +69,16 @@ mu <- apply(a, 2, cumsum)
 
 # Plot it
 matplot(t, mu, type = 'l', main = "Random walk", col = 1, lty = 1)
-matlines(t, quants * sqrt(t), col = 'red', lty = q_lty)
+matlines(t, quants * sqrt(t), col = 'blue', lty = q_lty)
 ```
 
 ### Quarterly random walk
 
 $$\mu_{t + 1} = \mu_{t - 3} + a_t$$
 
-$$\mu_{t + 1} | \mu_{t - 3} \sim N \bigg( \mu_{t - 3}, \tau^2 \bigg)$$
+$$\mu_{t + 1} | \mu_{t - 3} \sim N \left( \mu_{t - 3}, \tau^2 \right)$$
 
-$$u_0 = 0 \implies \mu_t \sim N \bigg( 0, ceiling \bigg( \frac{t}{4} \bigg) \tau^2 \bigg)$$
+$$u_0 = 0 \implies \mu_t \sim N \left( 0, ceiling \left( \frac{t}{4} \right) \tau^2 \right)$$
 
 ```{r}
 # Simulate quarterly random walk 
@@ -93,20 +89,20 @@ mu_q <- apply(a, 2, function(column)
 matplot(mu_q, type = 'l', xlab = "Time", ylab = "Value",
         main = "Quarterly random walk", col = 1, lty = 1)
 grid(nx = n_t / 4, ny = NA)
-matlines(t, quants * sqrt(ceiling(t / 4)), col = 'red', lty = q_lty)
+matlines(t, quants * sqrt(ceiling(t / 4)), col = 'blue', lty = q_lty)
 ```
 
 ### Evolving variance
 
 $$h_{t + 1} = h_t + a_t$$
 
-$$y_t = \exp \bigg( \frac{h_t}{2} \bigg) e_t$$
+$$y_t = \exp \left( \frac{h_t}{2} \right) e_t$$
 
 $$y_t \not\sim N$$
 
 $$y_t | h_t \sim N(0, \exp(h_t))$$
 
-$$h_0 = 0 \implies \log\{var(y_t)\} \sim N(0, t\tau^2)$$
+$$h_0 = 0 \implies \log\{var(y_t)\} \sim N(0, t \tau^2)$$
 
 ```{r}
 # Simulate evolvng variance
@@ -116,7 +112,7 @@ y_v <- exp(h / 2) * e
 # Plot it
 matplot(y_v, type = 'l', xlab = "Time", ylab = "Value",
         main = "Evolving variance", col = 1, lty = 1)
-lines(rep(0, n_t), col = 'red')
+lines(rep(0, n_t), col = 'blue')
 ```
 
 ### Filtering for a random walk plus white noise model
@@ -132,7 +128,7 @@ $$y_t \sim N(0, t \tau^2 + \sigma^2)$$
 y <- mu + e
 matplot(t, y, type = 'l', main = "Random walk plus white noise", col = 1, 
         lty = 1)
-matlines(t, quants * sqrt(t + 1), col = 'red', lty = q_lty)
+matlines(t, quants * sqrt(t + 1), col = 'blue', lty = q_lty)
 ```
 $$x_t := \mu_t$$
 
@@ -200,12 +196,11 @@ var_x_t <- solve(D) %*% solve(t(D))
 E_x_given_y <- var_x_t %*% solve(var_x_t + diag(n_t)) %*% y
 
 # Plot it
-matplot(t, y, type = 'l', main = "Random walk plus white noise", col = 1, 
-        lty = 1)
-quant_reps <- matrix(rep(c(0, 1.96, -1.96), each = n_samps), nrow = n_t)
-filt_quants <- matrix(E_x_given_y, nrow = n_t, ncol = n_reals * 3)
-matlines(t, filt_quants + quant_reps, col = 'blue', lty = rep(q_lty, each = n_reals))
+plot(t, y[, 1], type = 'l', col = 1, lty = 1, ylab = "y", 
+     main = "Filter for random walk plus white noise model")
+matlines(t, rep(E_x_given_y[, 1], 3) + quants, col = 'blue', lty = q_lty)
 grid()
-# CI's look a bit wide but it's hard to tell, might be OK
+
+# CI's look a bit wide
 ```
 
