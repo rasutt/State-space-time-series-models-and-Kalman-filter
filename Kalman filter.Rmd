@@ -1,0 +1,45 @@
+---
+title: "Kalman Filter"
+author: "Robin Aldridge-Sutton"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### State-space model
+
+For a state-space model where $y_t$ are observed and $x_t$ are the latent states over time.
+
+$$ y_t = y_{t - 1} + e_t, e_t \sim N(0, \sigma^2) $$
+$$ x_t = x_{t - 1} + a_t, a_t \sim N(0, \tau^2), t > 1 $$
+
+### $\mathbf{x_1 | y_1}$
+
+$$ x_1 \sim N(0, K^2), $$
+K large
+$$ P(x_1 | y_1) \propto P(y_1 | x_1) P(x_1) $$
+$$ \propto \exp \left(\frac{-1}{2\sigma^2} (y_1 - x_1)^2 \right) \exp \left(\frac{-x_1^2}{2K^2} \right) $$
+$$ x_1 | y_1 \sim N \left(\left( \frac{1}{\sigma^2} + \frac{1}{K^2} \right)^{-1} \frac{y_1}{\sigma^2}, \left( \frac{1}{\sigma^2} + \frac{1}{K^2} \right)^{-1} \right) $$
+
+### $\mathbf{x_{t - 1} | y_{t - 1}, ..., y_1}, t > 1$
+
+$$ x(t | t - 1) := E(x_{t - 1} | y_{t - 1}, ..., y_1) $$
+$$ s(t | t - 1) := Var(x_{t - 1} | y_{t - 1}, ..., y_1) + \tau^2 $$
+$$ x_t | y_{t - 1}, ..., y_1 \sim N(x(t | t - 1), s(t | t - 1)) $$
+$$ P(x_t | y_t, ..., y_1) \propto P(y_t | x_t) P(x_t | y_{t - 1}, ..., y_1) $$
+$$ \propto \exp \left(\frac{-1}{2\sigma^2} (y_t - x_t)^2 \right) \exp \left(\frac{-1}{s(t | t - 1)} (x_1 - x(t | t - 1))^2 \right) $$
+$$ x_t | y_t, ..., y_1 \sim N \left(\left( \frac{1}{\sigma^2} + \frac{1}{s(t | t - 1)} \right)^{-1} \left( \frac{y_1}{\sigma^2} + \frac{x(t | t - 1)}{s(t | t - 1)} \right), \left( \frac{1}{\sigma^2} + \frac{1}{s(t | t - 1)} \right)^{-1} \right) $$
+
+### Kalman filter for $\mathbf{t > 1}$
+
+$$ \epsilon_1 := y_1 - E(y_1) = y_1 $$
+$$ R_1 = Var(y_1) := K^2 + \sigma^2 $$
+$$ \epsilon_t := y_t - E(y_t | y_{t - 1}, ..., y_1) = x_t - x(t|t - 1) + e_t $$
+$$ R_t := Var(e_t) = s(t|t - 1) + \sigma^2 $$
+
+### Likelihood of $\mathbf{y_t, ..., y_1}$
+
+$$ P(y_t, ..., y_1 | \theta) = P(y_1 | \theta) ... P(y_{t - 1}, ..., y_1 | \theta) $$
+$$ = \prod_{t = 1}^T \frac{1}{\sqrt{2 \pi R_t(\theta)} } \exp \left( \frac{-\epsilon_t(\theta)^2}{2 R_t(\theta)} \right) $$
